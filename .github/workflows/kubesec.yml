@@ -1,4 +1,4 @@
-name: Terraform Plan in Parent Module
+name: Terraform Plan for Azure
 
 on:
   push:
@@ -12,22 +12,24 @@ jobs:
 
     defaults:
       run:
-        working-directory: parent_module  # 👉 Ye batata hai ki kaha se commands run hongi
+        working-directory: parent_module  # your main.tf lives here
 
     steps:
-      - name: Checkout Repository
+      - name: Checkout Code
         uses: actions/checkout@v3
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.KEY_SECRET }}
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: 1.6.6  # Aapke version ke hisab se change karein
+          terraform_version: 1.6.6
 
       - name: Terraform Init
         run: terraform init
-
-      - name: Terraform Validate
-        run: terraform validate
 
       - name: Terraform Plan
         run: terraform plan
